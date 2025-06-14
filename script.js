@@ -1,12 +1,5 @@
 let currentDate = new Date();
-let events = [];
-
-fetch("events.json")
-  .then(res => res.json())
-  .then(data => {
-    events = data;
-    renderCalendar();
-  });
+let events = JSON.parse(document.getElementById("eventData").textContent);
 
 function renderCalendar() {
   const monthYear = document.getElementById("monthYear");
@@ -15,42 +8,52 @@ function renderCalendar() {
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
-  monthYear.textContent = `${currentDate.toLocaleString("default", { month: "long" })} ${year}`;
-
   const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
-  const startDay = new Date(firstDay);
-  startDay.setDate(firstDay.getDate() - firstDay.getDay());
+  const lastDay = new Date(year, month + 1, 0); // Last date of month
 
-  const endDay = new Date(lastDay);
-  endDay.setDate(lastDay.getDate() + (6 - lastDay.getDay()));
+  // Update header
+  monthYear.textContent = firstDay.toLocaleString("default", { month: "long", year: "numeric" });
 
+  // Clear previous grid
   calendarGrid.innerHTML = "";
 
+  // Add day names
   const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   dayNames.forEach(day => {
     const el = document.createElement("div");
-    el.className = "calendar-day";
-    el.style.fontWeight = "bold";
+    el.className = "calendar-day header";
     el.textContent = day;
     calendarGrid.appendChild(el);
   });
 
-  let day = new Date(startDay);
-  while (day <= endDay) {
+  // Fill empty cells before 1st
+  for (let i = 0; i < firstDay.getDay(); i++) {
+    const emptyCell = document.createElement("div");
+    emptyCell.className = "calendar-day empty";
+    calendarGrid.appendChild(emptyCell);
+  }
+
+  // Fill actual days
+  for (let day = 1; day <= lastDay.getDate(); day++) {
     const cell = document.createElement("div");
     cell.className = "calendar-day";
-    if (day.toDateString() === new Date().toDateString()) {
+
+    const date = new Date(year, month, day);
+    cell.textContent = day;
+
+    // Highlight today
+    const today = new Date();
+    if (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    ) {
       cell.classList.add("today");
     }
 
-    const dayNum = document.createElement("div");
-    dayNum.textContent = day.getDate();
-    cell.appendChild(dayNum);
-
-    const dayStr = day.toISOString().split("T")[0];
+    // Add events
+    const dayStr = date.toISOString().split("T")[0];
     const dayEvents = events.filter(e => e.date === dayStr);
-
     dayEvents.forEach(event => {
       const ev = document.createElement("div");
       ev.className = "event";
@@ -60,7 +63,6 @@ function renderCalendar() {
     });
 
     calendarGrid.appendChild(cell);
-    day.setDate(day.getDate() + 1);
   }
 }
 
@@ -73,3 +75,6 @@ function nextMonth() {
   currentDate.setMonth(currentDate.getMonth() + 1);
   renderCalendar();
 }
+
+// Initial render
+renderCalendar();
