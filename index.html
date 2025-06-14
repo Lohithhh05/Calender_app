@@ -1,24 +1,31 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Simple Calendar</title>
-  <link rel="stylesheet" href="style.css"/>
+  <title>📅 My 2025 Planner - Calendar App</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <h1 class="app-title">📆 Google Calendar</h1>
+
   <div class="calendar-container">
     <div class="calendar-header">
-      <button onclick="prevMonth()">⟨</button>
+      <button onclick="prevMonth()">⬅️</button>
       <h2 id="monthYear"></h2>
-      <button onclick="nextMonth()">⟩</button>
+      <button onclick="nextMonth()">➡️</button>
     </div>
-    <div class="calendar-grid" id="calendarGrid"></div>
+    <div id="calendarGrid" class="calendar-grid"></div>
   </div>
 
-  <script src="events.json" type="application/json" id="eventData"></script>
+  <!-- Hidden event data -->
+  <div id="eventData" style="display: none;">
+  [
+    { "title": "Meeting", "date": "2025-06-15", "color": "#f39c12" },
+    { "title": "Lunch", "date": "2025-06-15", "color": "#e74c3c" },
+    { "title": "Family Time", "date": "2025-06-16", "color": "#2ecc71" }
+  ]
+  </div>
   <script src="script.js"></script>
 </body>
 </html>
-
