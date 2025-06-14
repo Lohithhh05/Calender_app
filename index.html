@@ -1,0 +1,155 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Simple Calendar</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <div class="calendar-container">
+    <div class="calendar-header">
+      <button onclick="prevMonth()">⟨</button>
+      <h2 id="monthYear"></h2>
+      <button onclick="nextMonth()">⟩</button>
+    </div>
+    <div class="calendar-grid" id="calendarGrid"></div>
+  </div>
+
+  <script src="events.json" type="application/json" id="eventData"></script>
+  <script src="script.js"></script>
+</body>
+</html>
+
+// style.css
+/* Paste this into your style.css */
+body {
+  font-family: sans-serif;
+  margin: 0;
+  padding: 20px;
+}
+.calendar-container {
+  max-width: 800px;
+  margin: auto;
+}
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-top: 10px;
+}
+.calendar-day {
+  border: 1px solid #ccc;
+  min-height: 80px;
+  padding: 4px;
+  position: relative;
+}
+.today {
+  border: 2px solid blue;
+}
+.event {
+  background-color: tomato;
+  color: white;
+  font-size: 12px;
+  padding: 2px;
+  margin-top: 4px;
+  border-radius: 4px;
+}
+
+// events.json
+/* Save this file as events.json */
+[
+  {
+    "title": "Meeting",
+    "date": "2025-06-15",
+    "color": "#f39c12"
+  },
+  {
+    "title": "Lunch",
+    "date": "2025-06-15",
+    "color": "#e74c3c"
+  },
+  {
+    "title": "Family Time",
+    "date": "2025-06-16",
+    "color": "#2ecc71"
+  }
+]
+
+// script.js
+/* Paste this into script.js */
+let currentDate = new Date();
+let events = JSON.parse(document.getElementById("eventData").textContent);
+
+function renderCalendar() {
+  const monthYear = document.getElementById("monthYear");
+  const calendarGrid = document.getElementById("calendarGrid");
+
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+
+  monthYear.textContent = `${currentDate.toLocaleString("default", { month: "long" })} ${year}`;
+
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const startDay = new Date(firstDay);
+  startDay.setDate(firstDay.getDate() - firstDay.getDay());
+
+  const endDay = new Date(lastDay);
+  endDay.setDate(lastDay.getDate() + (6 - lastDay.getDay()));
+
+  calendarGrid.innerHTML = "";
+
+  const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  dayNames.forEach(day => {
+    const el = document.createElement("div");
+    el.className = "calendar-day";
+    el.style.fontWeight = "bold";
+    el.textContent = day;
+    calendarGrid.appendChild(el);
+  });
+
+  let day = new Date(startDay);
+  while (day <= endDay) {
+    const cell = document.createElement("div");
+    cell.className = "calendar-day";
+    if (day.toDateString() === new Date().toDateString()) {
+      cell.classList.add("today");
+    }
+
+    const dayNum = document.createElement("div");
+    dayNum.textContent = day.getDate();
+    cell.appendChild(dayNum);
+
+    const dayStr = day.toISOString().split("T")[0];
+    const dayEvents = events.filter(e => e.date === dayStr);
+
+    dayEvents.forEach(event => {
+      const ev = document.createElement("div");
+      ev.className = "event";
+      ev.style.backgroundColor = event.color;
+      ev.textContent = event.title;
+      cell.appendChild(ev);
+    });
+
+    calendarGrid.appendChild(cell);
+    day.setDate(day.getDate() + 1);
+  }
+}
+
+function prevMonth() {
+  currentDate.setMonth(currentDate.getMonth() - 1);
+  renderCalendar();
+}
+function nextMonth() {
+  currentDate.setMonth(currentDate.getMonth() + 1);
+  renderCalendar();
+}
+
+renderCalendar();

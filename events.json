@@ -1,0 +1,22 @@
+[
+  {
+    "title": "Project Meeting",
+    "date": "2025-06-15",
+    "color": "#f39c12"
+  },
+  {
+    "title": "Lunch with Team",
+    "date": "2025-06-15",
+    "color": "#e74c3c"
+  },
+  {
+    "title": "Client Call",
+    "date": "2025-06-16",
+    "color": "#2ecc71"
+  },
+  {
+    "title": "Doctor Appointment",
+    "date": "2025-06-18",
+    "color": "#9b59b6"
+  }
+]
